@@ -3,3 +3,17 @@
 A raycasting engine with ambient light, dynamic observer light source.
 
 The map and textures are from the mother of all first-person-shooter game Wolfenstein 3D. Wolfenstein 3D was groundbreaking in 3D using raycasting for low performance machines (by todays measures).
+
+== How to compile and run
+
+This raycaster is made in Go (Golang) and use the UI library Fyne for window and image display.
+
+To compile this application using go you need to first install Fyne.
+Installation instructions are found at their https://docs.fyne.io/started/[website].
+
+Then type +
+`go build -o wolfensteinmaze cmd/main.go` +
+to build the executable binary.
+
+Or run the application immediately by: +
+`go run cmd/main.go`
