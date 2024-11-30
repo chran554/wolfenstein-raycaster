@@ -1,0 +1,181 @@
+= Testdata
+
+This is game map data from the 1992 game "Wolfenstein 3D" (a.k.a. "Wolf 3D").
+Wolfenstein 3D (as the shareware release) has the level (map) data compressed *twice*, by both RLEW and Carmack algorithms. The testdata here is the game map data decompressed in stages to be able to verify the Carmack and RLEW decompression algorithms.
+
+Wolfenstein 3D is Shareware and downloadable at https://archive.org/details/wolf3dsw
+
+
+== Files
+
+.Files with testdata
+|===
+|File |Size |Comment
+
+|`wolfenstein_level1_plane0_RLEW_Carmack_compressed.bin`|2.0K (2009 bytes)|The original data chunk for level 1 plane 0 (the wall and door information) read from the `GAMEMAPS.WL1` file from offset and length specified in the `MAPHEAD.WL1` file.
+
+The data is compressed by both RLEW and then Carmack and include the expected decompress size prefixes.
+
+|`wolfenstein_level1_plane0_RLEW_compressed.bin`|4.3K (4452 bytes)|The original data chunk after Carmack decompression.
+
+The data is still RLEW compressed and include the expected decompress size prefix. +
+
+To expand the RLE data, you need to use the value `0xABCD` as the RLE flag. This "magic" value is specified in map header file `MAPHEAD.WL1`.
+
+|`wolfenstein_level1_plane0_level_data.bin`|8.0K (8192 bytes)|The game level 1 plane 0 data completely uncompressed.
+
+Do note that the file size is exactly: 8192 (bytes) = 64 (level width) * 64 (level height) * 2 (bytes per uint16).
+|===
+
+== Compression and decompression
+
+First, the binary level data is compressed with RLEW compression and then compressed again with Carmack compression before it is save as a binary chunk to the `GAMEMAPS.WL1` file.
+To unpack/decompress the game level map information, you need to first decompress the data with Carmack decompression
+and then by RLEW decompression.
+
+The Carmack and RLEW decompress algorithm are described at https://moddingwiki.shikadi.net/wiki/GameMaps_Format[Wikipedia].
+The algorithms can take a word stream (a word is a (two bytes long) unsigned 16bit LE) and decompress it to a larger size word stream.
+
+The algorithms themselves do not require any size information on how large the decompressed data will be,
+but the game map information is prefixed with the expected decompression size (as a double byte, uint16 LE),
+in both decompression stages. (I guess it was used to be able to preallocate memory space for the unpacked data.)
+
+.Game map level data structure
+----
+Game map level data chunk from file:
++-----------------------+-------------------------------+
+| expected size 2 byte  | Carmack compressed data...    |
++-----------------------+-------------------------------+
+
+Carmack decompression of compressed data (excluding the size) gives:
++-----------------------+----------------------------------------+
+| expected size 2 byte  | RLEW compressed data...                |
++-----------------------+----------------------------------------+
+
+RLEW decompression of compressed data (excluding the size) gives:
++--------------------------------------------------------------+
+| Actual game map level map data...                            |
++--------------------------------------------------------------+
+----
+
+=== Summary
+
+So to decompress:
+
+1. Read the first uint16 LE from the compressed game level data. This is the expected Carmack decompression size.
+2. Decompress the rest of the game level data using Carmack decompression.
+3. From the result data, read the first uint16 LE from the data. This is the expected RLEW decompression size.
+4. Decompress the rest of the game level data using RLEW decompression. For the test data file supplied you need to use the value `0xABCDE` as RLE flag. You now have the game level data.
+
+The number of words, uint16 LE, in the game map level data should equal the level width * height from the level header information.
+
+You still have to figure out what all values in the data represent (walls with different textures, doors, and secrets).
+
+== Print level
+
+[source,go]
+----
+func TestWolfenstein3DMap(t *testing.T) {
+	levelMaps, err := Wolfenstein3DMap()
+	assert.NoError(t, err)
+
+	lookup := []byte("abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890ABCDEFGIJKLMNOPQRSTUVWXYZ")
+
+	for _, levelMap := range levelMaps {
+		fmt.Printf("Level: \"%s\", size: %dx%d\n", levelMap.name, levelMap.width, levelMap.height)
+
+		fmt.Print("    ")
+		for x := 0; x < levelMap.width; x++ {
+			fmt.Printf("%d", x%10)
+		}
+		fmt.Println()
+
+		for y := 0; y < levelMap.height; y++ {
+			fmt.Printf("%3d ", y)
+			for x := 0; x < levelMap.width; x++ {
+				value := levelMap.mapData[y*levelMap.width+x]
+
+				if value == 90 {
+					fmt.Print("|") // Door
+				} else if value == 91 {
+					fmt.Print("-") // Door
+				} else if value < 107 {
+					fmt.Print(string(lookup[value]))
+				} else {
+					fmt.Print(" ")
+				}
+			}
+			fmt.Println()
+		}
+	}
+}
+----
+
+----
+Level: "Wolf1 Map1", size: 64x64
+    0123456789012345678901234567890123456789012345678901234567890123
+  0 bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+  1 bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+  2 bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+  3 bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+  4 bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+  5 bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+  6 bbbbbbbbbbbbbbbbbbbbbbbbbbbbmmmmmmmmmmmmmmmbbbbbbbbbbbbbbbbbbbbb
+  7 bbbbbbbbbbbbbbbbbbbbbbbbbbbbmmmkmmmmmkmmmmmbbbbbbbbbbbbbbbbbbbbb
+  8 bbbbbbbbbbbbbbbbbbbbbbbbbbbbm           mmmmmmbbbbbbbbbbbbbbbbbb
+  9 bbbbbb    bbbbbbbbbccbccdbcbk           kmmmmmbbbbbbbbbbbbbbbbbb
+ 10 bbbbbb    bbbbbbbc          m           m   mmbbbbbbbbbbbbbbbbbb
+ 11 bbbbbb     bbbbbbb          |           | K kmbbbbbbbbbbbbbbbbbb
+ 12 bbbbbb     bbbbbbc          m           m   mmbbbbbbbbbbbbbbbbbb
+ 13 bbbbbbcgbcecbgbbbb   bbbdbbcl           lmmmmmbbbbbbbbbbbbbbbbbb
+ 14 bbbbbc         cbb   bbbbbbbm           mmmmmmbbbbbbbbbbbbbbbbbb
+ 15 bbbbbd         dbc   bcbbbbbmmmkmm-mmkmmmmbbbbbbbbbbbbbbbbbbbbbb
+ 16 bbbbbb         c       bbbbbmmmmm   mmmmmmbbbbbbbbbbbbbbbbbbbbbb
+ 17 bbbbbc         |       bbbbbbbmmm   mmmmmmbbbbbbbbbbbbbbbbbbbbbb
+ 18 ccccbb         b       bbbbbbbmml   lmbbbbbbbbbbbbbbbbbbbbbbbbbb
+ 19 bcbcbd         dbcbgbcbbcbbbbbmmm   mmbbbbbbbbbbbbbbbbbbbbbbbbbb
+ 20 c   bb         bbbbbbbbbbbmmmmmmm   mmmmbbbbbbbbbbbbbbbbbbbbbbbb
+ 21 b   cbcgbb-bbgcbbbbbbbbbbbmmmmmmm   mmmmbbbbbbbbbbbbbbbbbbbbbbbb
+ 22 b   bbbbb   cbbbbbbbbbbbbbmm  kK      mmbbbbbbbbbbbbbbbbbbbbbbbb
+ 23 cb-bbbbbd   dbbbbbbbbbbbbbmm  mmm   mmmmbbbbbbbbbbbbbbbbbbbbbbbb
+ 24 b   bbcbb   cbbbbbbbbbbbbbmm  mmm   mmmmbbbbbbbbbbbbbbbbbbbbbbbb
+ 25 b   c   b   bbbbbbbbbbbbbbmm  mmm   mmmmbbbbbbbbbbbbbbbbbbbbbbbb
+ 26 b       d   dbbbbbbbbbbbbbmmmmmmk   kmbbbbbbbbbbbbbbbbbbbbbbbbbb
+ 27 b   b   c   bbbbbbbbbbbbbbmmmmmmm   mmbbbbbbbbbbbbbbjjjjjjjjjjjj
+ 28 c   bcbcbb-bbcbbbbbbbbbbbbbbbbbbmk-kmcccccccbbbbbbbbjiijiiijjjij
+ 29 d   db         bbbbbbbbbbbcbcbdc     bdbcbbcbbbbbbbbji        ij
+ 30 c   bc         dbbbbbbbbbbb               ccjjjjjjjjji        jj
+ 31 b   bc         bbbbbbbbbbbg               gjiiijiiijji        ij
+ 32 b    b         cbbbbbbbbbbb                j         i        jj
+ 33 b    |         dbbbbbbbbbbc                |         |        fj
+ 34 b    b         bbbbbbbbbbbc                i         j        jj
+ 35 b   bb         ccbbbbbbbbbg               giii    jjii        ij
+ 36 c   bb         dbbbbbbbbbbc               cccii  iiiij        jj
+ 37 b   bb         bbbbbbbbbbbbbebcb     bcebcbcbij  jiiji        ij
+ 38 e   ebcbbc-bbccbbbbbbbbbbbbbbbbbii-jiiccccccbij  iijjjji ji jijj
+ 39 b   cbbbb   bbbbbbbbbbbbbbbbbbbii   jibbbbbbbii  jijjjijjjjjjjjj
+ 40 b   bbbbc   cbbbbbbbbbbbbbbbbbbij   jibbbbbbbij  iijjjjjjjjjjjjj
+ 41 c   b   b   bbbbbbbbbbbbbbbbbbbii   jibbbbbbbii  jiiiiiiiiiiiibb
+ 42 b       d   dbbbbbbbbbbbbbbbbbbij   iibbbbbbbij  iij i j j ijibb
+ 43 c   c   c   cbbbbbbbbbbbbbbbbbbij   jibbbbbbbii   i         iibb
+ 44 c   bbcbb   cbbbbcbbbbbbbbbbbbbii   iibbbbbbbii   |         fibb
+ 45 b   cbcbc   bcbccdbcbgcbcbbbbbbij   ijbbbbbbbij   i         iibb
+ 46 c                c      dvbbbbbii   jibbbbbbbiijiiij i i i ijibb
+ 47 c                |      D vbbbbij   jibbbbbbbiiiiiiiiiiiiiiiiibb
+ 48 b                b     Kdvbbbbbij   iibbbbbbbbbbbbbbbbbbbbbbbbbb
+ 49 bccbccbccbebbbcbbbbcbgbcbbcbiiiii   jiiiiiibbbbbbbbbbbbbbbbbbbbb
+ 50 bbbbbbbbbbvd  b  b  bbbbbbbiijijii-iiiiijiibbbbbbbbbbbbbbbbbbbbb
+ 51 bbbbbbbbbv D  b  b cbbbbbbij    i   i    jibbbbbbbbbbbbbbbbbbbbb
+ 52 bbbbbbbbbbvd     bbbbbbbbbii    |   |    jibbbbbbbbbbbbbbbbbbbbb
+ 53 bbbbbbbbbbbbbbbbbbbbbbbbbbii    i   i    jibbbbbbbbbbbbbbbbbbbbb
+ 54 bbbbbbbbbbbbb  bbbbbbbbbbbij    j   j    jibbbbbbbbbbbbbbbbbbbbb
+ 55 bbbbbbbbbbbbb  bbbbbbbbbbbiiijiij   iiiiiiibbbbbbbbbbbbbbbbbbbbb
+ 56 bbbbbbbbbbbbbbbbbbbbbbbbbbii    i   i    iibbbbbbbbbbbbbbbbbbbbb
+ 57 bbbbbbbbbbbbbbbbbbbbbbbbbbij    |   |    jibbbbbbbbbbbbbbbbbbbbb
+ 58 bbbbbbbbbbbbbbbbbbbbbbbbbbii    i   i    iibbbbbbbbbbbbbbbbbbbbb
+ 59 bbbbbbbbbbbbbbbbbbbbbbbbbbiijjiij   jiijiiibbbbbbbbbbbbbbbbbbbbb
+ 60 bbbbbbbbbbbbbbbbbbbbbbbbbbii             iibbbbbbbbbbbbbbbbbbbbb
+ 61 bbbbbbbbbbbbbbbbbbbbbbbbbbij             iibbbbbbbbbbbbbbbbbbbbb
+ 62 bbbbbbbbbbbbbbbbbbbbbbbbbbii             iibbbbbbbbbbbbbbbbbbbbb
+ 63 bbbbbbbbbbbbbbbbbbbbbbbbbbiifjifijhijfjifiibbbbbbbbbbbbbbbbbbbbb
+----
