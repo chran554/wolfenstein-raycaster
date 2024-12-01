@@ -1,6 +1,7 @@
 package raycastmap
 
 import (
+	"github.com/anthonynsimon/bild/blend"
 	"image"
 	"image/color"
 	"image/png"
@@ -13,37 +14,56 @@ type Texture struct {
 	dominantColor color.Color
 }
 
-func NewTexture(imageFilename string) *Texture {
+func NewTextureWithOverlay(imageFilename string, overlayFilename string) *Texture {
 	texture := &Texture{}
 
 	textureImage, _ := readImage(imageFilename)
+	overlayImage, _ := readImage(overlayFilename)
 
-	if textureImage != nil {
-		texture.img = textureImage
+	texture.img = textureImage
 
-		var r, g, b, a int
-		for y := 0; y < textureImage.Bounds().Dy(); y++ {
-			for x := 0; x < textureImage.Bounds().Dx(); x++ {
-				pr, pg, pb, pa := textureImage.At(x, y).RGBA()
-				r += int(pr)
-				g += int(pg)
-				b += int(pb)
-				a += int(pa)
-			}
-		}
+	if overlayImage != nil {
+		texture.img = blend.Normal(textureImage, overlayImage)
+	}
 
-		amountPixels := textureImage.Bounds().Dx() * textureImage.Bounds().Dy()
-		dominantColor := color.RGBA{
-			R: uint8((r / amountPixels) >> 8),
-			G: uint8((g / amountPixels) >> 8),
-			B: uint8((b / amountPixels) >> 8),
-			A: uint8((a / amountPixels) >> 8),
-		}
-
-		texture.dominantColor = dominantColor
+	if texture.img != nil {
+		texture.dominantColor = averageColor(textureImage)
 	}
 
 	return texture
+}
+
+func NewTexture(imageFilename string) *Texture {
+	texture := &Texture{}
+
+	texture.img, _ = readImage(imageFilename)
+	if texture.img != nil {
+		texture.dominantColor = averageColor(texture.img)
+	}
+
+	return texture
+}
+
+func averageColor(textureImage image.Image) color.RGBA {
+	var r, g, b, a int
+	for y := 0; y < textureImage.Bounds().Dy(); y++ {
+		for x := 0; x < textureImage.Bounds().Dx(); x++ {
+			pr, pg, pb, pa := textureImage.At(x, y).RGBA()
+			r += int(pr)
+			g += int(pg)
+			b += int(pb)
+			a += int(pa)
+		}
+	}
+
+	amountPixels := textureImage.Bounds().Dx() * textureImage.Bounds().Dy()
+	dominantColor := color.RGBA{
+		R: uint8((r / amountPixels) >> 8),
+		G: uint8((g / amountPixels) >> 8),
+		B: uint8((b / amountPixels) >> 8),
+		A: uint8((a / amountPixels) >> 8),
+	}
+	return dominantColor
 }
 
 func (t *Texture) DominantColor() color.Color {

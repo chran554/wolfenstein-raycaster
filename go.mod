@@ -4,6 +4,7 @@ go 1.23.2
 
 require (
 	fyne.io/fyne/v2 v2.5.2
+	github.com/anthonynsimon/bild v0.14.0
 	github.com/ojrac/opensimplex-go v1.0.2
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/image v0.18.0

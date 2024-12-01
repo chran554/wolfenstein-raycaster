@@ -11,7 +11,7 @@ type IntersectionInfo struct {
 	Hit                        bool
 	PerpendicularDistance      float64
 	Wall                       *raycastmap.Cell
-	Side                       int // North-South wall or East-West wall
+	Side                       int // North-South wall (=0) or East-West wall (=1)
 	WallSideIntersectionOffset float64
 	ObserverPoint              *Vector
 	IntersectionPoint          *Vector
