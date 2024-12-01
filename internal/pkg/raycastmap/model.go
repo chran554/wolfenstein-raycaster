@@ -12,6 +12,7 @@ type Map interface {
 	Width() int
 	Height() int
 	WallAt(x, y int) bool
+	ObstacleAt(x, y int) bool
 	StructureAt(x, y int) Structure
 }
 
@@ -23,6 +24,10 @@ type Structure struct {
 
 func (s Structure) IsWall() bool {
 	return s != StructureNone
+}
+
+func (s Structure) IsObstacle() bool {
+	return s.IsWall() && s != StructureDoor
 }
 
 /*
@@ -40,6 +45,7 @@ func (s Structure) IsWall() bool {
 00023 Wood wall
 00041 Exit door
 00102 Elevator-ish(?) door
+00098 Cyan door, handle on left
 */
 
 var (
@@ -47,6 +53,7 @@ var (
 	overlayPath = "internal/pkg/raycastmap/overlay/"
 
 	StructureNone                    = Structure{}                                                                                                                                                                                      // Nothing, void, "waste of empty space"
+	StructureDoor                    = Structure{Texture: NewTexture(texturePath + "WAL00098.png"), Texture2: NewTexture(texturePath + "WAL00099.png")}                                                                                 // Nothing, void, "waste of empty space"
 	StructureGreyStoneWall1          = Structure{Texture: NewTexture(texturePath + "WAL00000.png"), Texture2: NewTexture(texturePath + "WAL00001.png")}                                                                                 // Grey stone wall
 	StructureGreyStoneWall2          = Structure{Texture: NewTexture(texturePath + "WAL00002.png"), Texture2: NewTexture(texturePath + "WAL00003.png")}                                                                                 // Grey stone wall
 	StructureSwastikaFlagOnStoneWall = Structure{Texture: NewTextureWithOverlay(texturePath+"WAL00004.png", overlayPath+"never-again.png"), Texture2: NewTextureWithOverlay(texturePath+"WAL00005.png", overlayPath+"never-again.png")} // Red Swastika flag on stone wall

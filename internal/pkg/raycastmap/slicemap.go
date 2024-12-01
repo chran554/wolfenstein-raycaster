@@ -26,12 +26,16 @@ func NewSliceMap(mapData [][]int, startX, startY float64, startDir float64, valu
 	return SliceMap{mapData: mapData, startX: startX, startY: startY, startDir: startDir, valueToStructureFn: valueToStructureFn}
 }
 
+func (sm SliceMap) StructureAt(x, y int) Structure {
+	return sm.valueToStructureFn(sm.mapData[x][y])
+}
+
 func (sm SliceMap) WallAt(x, y int) bool {
 	return sm.StructureAt(x, y) != StructureNone
 }
 
-func (sm SliceMap) StructureAt(x, y int) Structure {
-	return sm.valueToStructureFn(sm.mapData[x][y])
+func (sm SliceMap) ObstacleAt(x, y int) bool {
+	return sm.WallAt(x, y) && sm.StructureAt(x, y) != StructureDoor
 }
 
 func (sm SliceMap) Width() int {

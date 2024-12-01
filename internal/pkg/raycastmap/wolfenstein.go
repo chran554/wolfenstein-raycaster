@@ -42,6 +42,10 @@ func (w *WolfensteinMap) WallAt(x, y int) bool {
 	return w.StructureAt(x, y).IsWall()
 }
 
+func (w *WolfensteinMap) ObstacleAt(x, y int) bool {
+	return w.StructureAt(x, y).IsObstacle()
+}
+
 /*
 Wolfenstein texture mapping, Level 1:
 
@@ -101,6 +105,10 @@ func (w *WolfensteinMap) StructureAt(x, y int) Structure {
 		structure = StructureWoodWall
 	case 0x15:
 		structure = StructureExitDoor
+	case 0x5A:
+		structure = StructureDoor
+	case 0x5B:
+		structure = StructureDoor
 	case 0x64:
 		structure = StructureElevatorDoor
 	}

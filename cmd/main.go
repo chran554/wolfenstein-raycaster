@@ -252,7 +252,7 @@ func main() {
 func isObstacleInTheWay(headingDirection *maze.Vector, observer *maze.Vector, worldMap *raycastmap.WolfensteinMap, observerRadius float64, movementLength float64) bool {
 	info := maze.RaycastRay(observer, headingDirection, worldMap)
 	dist := info.IntersectionPoint.Sub(observer).Length()
-	return (dist - observerRadius) < movementLength
+	return info.Wall.Structure.IsObstacle() && (dist-observerRadius) < movementLength
 }
 
 func paintRayMap(mapImage *image.RGBA, observer *maze.Vector, m raycastmap.Map) {
