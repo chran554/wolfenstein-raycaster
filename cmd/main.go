@@ -30,9 +30,9 @@ var (
 
 	observerRadius = 0.2
 
-	useTextures      = false
-	useAmbientLight  = 0 // Value: 0 == "ambient light off", 1 == "full ambient light", 2 == "dark ambient light"
-	useObserverLight = 0 // Value: 0 == "observer light off", 1 == "observer light", 2 == "observer light animation"
+	useTextures      = true
+	useAmbientLight  = 2 // Value: 0 == "ambient light off", 1 == "full ambient light", 2 == "dark ambient light"
+	useObserverLight = 2 // Value: 0 == "observer light off", 1 == "observer light", 2 == "observer light animation"
 )
 
 func main() {

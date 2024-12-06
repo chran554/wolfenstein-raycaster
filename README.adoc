@@ -17,3 +17,88 @@ to build the executable binary.
 
 Or run the application immediately by: +
 `go run cmd/main.go`
+
+
+== Wolfenstein map values and mappings
+
+```
+   Wolfenstein texture mapping:
+
+   Map    Map                 Texture    Description
+   value  layer               name
+   -----  ---------------     --------   ----------------------------------
+   0x01   Layer 1 (Walls)     WAL00000   Grey stone wall
+   0x02   Layer 1 (Walls)     WAL00002   Grey stone wall
+   0x03   Layer 1 (Walls)     WAL00004   Red Swastika flag on stone wall
+   0x04   Layer 1 (Walls)     WAL00006   Hitler frame on grey stone wall
+   0x05   Layer 1 (Walls)     WAL00008   cell door (closed door, empty cell)
+   0x06   Layer 1 (Walls)     WAL00010   Eagle in grey stone arch
+   0x07   Layer 1 (Walls)     WAL00012   cell door (closed door, skeleton cell)
+   0x08   Layer 1 (Walls)     WAL00014   Blue stone wall
+   0x09   Layer 1 (Walls)     WAL00016   Blue stone wall
+   0x0A   Layer 1 (Walls)     WAL00018   Eagle frame on wood wall
+   0x0B   Layer 1 (Walls)     WAL00020   Hitler frame on wood wall
+   0x0C   Layer 1 (Walls)     WAL00023   Wood wall
+   0x15   Layer 1 (Walls)     WAL00041   Exit door
+   0x64   Layer 1 (Walls)     WAL00102   Elevator-ish(?) door
+
+   0x0D   Layer 2 (Special)
+   0x0E   Layer 2 (Special)
+   0x0F   Layer 2 (Special)
+   0x13   Layer 2 (Special)   -          Start point (facing north)
+   0x14   Layer 2 (Special)   -          Start point (facing east)
+   0x15   Layer 2 (Special)   -          Start point (facing south)
+   0x17   Layer 2 (Special)   SPR00002   Blue puddle(?)
+   0x18   Layer 2 (Special)   SPR00003   Green barrel
+   0x19   Layer 2 (Special)   SPR00004   Wood table
+   0x1A   Layer 2 (Special)   SPR00005   Green lamp on the floor
+   0x1B   Layer 2 (Special)   SPR00006   Yellow crystal chandelier in the roof
+   0x1D   Layer 2 (Special)   SPR00008   White bowl with brown food
+   0x1F   Layer 2 (Special)   SPR00010   Plant in gold pot
+   0x20   Layer 2 (Special)   SPR00011   Skeleton lying on floor
+   0x22   Layer 2 (Special)   SPR00013   Brown plant in blue pot
+   0x23   Layer 2 (Special)   SPR00014   Blue flower pot
+   0x24   Layer 2 (Special)   SPR00015   Round table
+   0x25   Layer 2 (Special)   SPR00016   Green lamp in the roof
+   0x27   Layer 2 (Special)   SPR00018   Knight armour statue
+   0x2A   Layer 2 (Special)   SPR00021   Heap of bones
+   0x2E   Layer 2 (Special)   SPR00025   Brown bowl
+   0x2F   Layer 2 (Special)   SPR00026   Chicken drumstick on plate
+   0x30   Layer 2 (Special)   SPR00027   Med-kit
+   0x31   Layer 2 (Special)   SPR00028   Ammo clip
+   0x32   Layer 2 (Special)   SPR00029   Automatic rifle
+   0x34   Layer 2 (Special)   SPR00031   Treasure gold cross
+   0x35   Layer 2 (Special)   SPR00032   Treasure gold cup
+   0x36   Layer 2 (Special)   SPR00033   Treasure chest
+   0x38   Layer 2 (Special)   SPR00035   Blue face orb (extra life)
+   0x3A   Layer 2 (Special)   SPR00037   Brown barrel
+   0x3C   Layer 2 (Special)   SPR00038   Stone well, blue liquid
+   0x3E   Layer 2 (Special)   SPR00041   Flag on standing pole
+   0x5A   Layer 2 (Special)   SPR00098   Cyan door with handle to the left either facing East-West
+   0x5B   Layer 2 (Special)   SPR00098   Cyan door with handle to the left either facing South-North
+   0x5C   Layer 2 (Special)              ?
+   0x5D   Layer 2 (Special)              ?
+   0x5E   Layer 2 (Special)              ?
+   0x5F   Layer 2 (Special)              ?
+   0x60   Layer 2 (Special)              ?
+   0x61   Layer 2 (Special)              ?
+   0x6A   Layer 2 (Special)
+   0x6B   Layer 2 (Special)
+   0x6C   Layer 2 (Special)              Enemy soldier in brown
+   0x6D   Layer 2 (Special)              ? Enemy soldier in brown
+   0x6E   Layer 2 (Special)              ? Enemy soldier in brown
+   0x6F   Layer 2 (Special)              Enemy soldier in brown
+   0x7C   Layer 2 (Special)   SPR00095   Dead soldier lying on the floor
+   0x8A   Layer 2 (Special)              ?
+   0x91   Layer 2 (Special)   SPR00050   Enemy soldier in brown
+   0x92   Layer 2 (Special)   SPR00050   Enemy soldier in brown
+   0x93   Layer 2 (Special)   SPR00050   Enemy soldier in brown
+   0xB0   Layer 2 (Special)              ?
+   0xB4   Layer 2 (Special)              ?
+   0xB5   Layer 2 (Special)              ?
+   0xB6   Layer 2 (Special)              ? Enemy soldier in brown
+   0xB7   Layer 2 (Special)              ?
+   0xB9   Layer 2 (Special)              ?
+   0xD4   Layer 2 (Special)              ?
+
+```
