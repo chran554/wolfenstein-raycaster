@@ -73,21 +73,30 @@ func TestPrintWolfensteinMap(t *testing.T) {
 	levelMaps, err := wolf3d.Wolfenstein3DMap()
 	assert.NoError(t, err)
 
-	level := 3                // Level to render
+	level := 0                // Level to render
 	const showSpecials = true // Show special locations, items, foes, start point et.c.
 
 	levelMap := levelMaps[level]
 
-	const mazeWallPlane = 0
-	const mazeSpecialsPlane = 1
+	const wallDataPlane = 0
+	const itemsDataPlane = 1
 
 	startPoint := Cell{Structure: StructureNone}
 
-	fmt.Println(levelMap.Name)
+	fmt.Println("Level name:", levelMap.Name)
+
+	fmt.Print("   ")
+	for x := 0; x < levelMap.Width; x++ {
+		fmt.Printf("%2d", x%10)
+	}
+	fmt.Println()
+
 	for y := 0; y < levelMap.Height; y++ {
+		fmt.Printf("%2d  ", y)
+
 		for x := 0; x < levelMap.Width; x++ {
-			cellValue := levelMap.Value(mazeWallPlane, x, y)
-			specialValue := levelMap.Value(mazeSpecialsPlane, x, y)
+			cellValue := levelMap.Value(wallDataPlane, x, y)
+			specialValue := levelMap.Value(itemsDataPlane, x, y)
 
 			// Record location of start point
 			if specialValue == 0x14 || specialValue == 0x13 || specialValue == 0x15 {

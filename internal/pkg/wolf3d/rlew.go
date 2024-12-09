@@ -6,23 +6,28 @@ import (
 
 // https://moddingwiki.shikadi.net/wiki/Id_Software_RLEW_compression
 
-// RLEWDecode decodes a RLE
+// RLEWDecode decodes an RLE
 func RLEWDecode(source []byte) []byte {
 	return RLEWDecodeWithRLEFlag(source, 0xFEFE)
 }
 
-// RLEWDecodeWithLengthPrefix decodes a RLE
+// RLEWDecodeWithLengthPrefix decodes an RLE
 func RLEWDecodeWithLengthPrefix(source []byte) (expectedSize int, data []byte) {
 	size := readUint16(source, 0)
 	return int(size), RLEWDecode(source[2:])
 }
 
-// RLEWDecodeWithLengthPrefixAndRLEFlag decodes a RLE
+// RLEWDecodeWithLengthPrefixAndRLEFlag decodes (decompresses) an RLE compressed uint16 stream.
+// This function should be used if the compressed stream is prefixed with uint16, little endian (two bytes) with the expected decompressed length.
+// This function does not perform any consistency checks that the decompressed is of expected length.
 func RLEWDecodeWithLengthPrefixAndRLEFlag(source []byte, rleFlag uint16) (expectedSize int, data []byte) {
 	size := readUint16(source, 0)
 	return int(size), RLEWDecodeWithRLEFlag(source[2:], rleFlag)
 }
 
+// RLEWDecodeWithRLEFlag decodes (decompresses) an RLE compressed uint16 stream.
+// This function should be used if the compressed stream is prefixed with uint16, little endian (two bytes) with the expected decompressed length.
+// This function does not perform any consistency checks that the decompressed is of expected length.
 func RLEWDecodeWithRLEFlag(source []byte, rleFlag uint16) []byte {
 	outputBuffer := bytes.Buffer{}
 
