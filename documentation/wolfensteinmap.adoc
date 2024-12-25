@@ -160,69 +160,70 @@ Remember that the first cell/tile in the data is location [0, height-1] and the 
 |===
 
 .Wolfenstein data plane 1 (specials), values and their texture mapping.
-```
-   Map    Map       Texture    Description
-   value  plane     name
-   -----  -------   --------   ----------------------------------
-   0x0D   Plane 1
-   0x0E   Plane 1
-   0x0F   Plane 1
-   0x13   Plane 1   -          Start point (facing north)
-   0x14   Plane 1   -          Start point (facing east)
-   0x15   Plane 1   -          Start point (facing south)
-   0x16   Plane 1   -          Start point (facing west)
-   0x17   Plane 1   SPR00002   Blue puddle(?)
-   0x18   Plane 1   SPR00003   Green barrel
-   0x19   Plane 1   SPR00004   Wood table
-   0x1A   Plane 1   SPR00005   Green lamp on the floor
-   0x1B   Plane 1   SPR00006   Yellow crystal chandelier in the roof
-   0x1D   Plane 1   SPR00008   White bowl with brown food
-   0x1F   Plane 1   SPR00010   Plant in gold pot
-   0x20   Plane 1   SPR00011   Skeleton lying on floor
-   0x22   Plane 1   SPR00013   Brown plant in blue pot
-   0x23   Plane 1   SPR00014   Blue flower pot
-   0x24   Plane 1   SPR00015   Round table
-   0x25   Plane 1   SPR00016   Green lamp in the roof
-   0x27   Plane 1   SPR00018   Knight armour statue
-   0x2A   Plane 1   SPR00021   Heap of bones
-   0x2E   Plane 1   SPR00025   Brown bowl
-   0x2F   Plane 1   SPR00026   Chicken drumstick on plate
-   0x30   Plane 1   SPR00027   Med-kit
-   0x31   Plane 1   SPR00028   Ammo clip
-   0x32   Plane 1   SPR00029   Automatic rifle
-   0x34   Plane 1   SPR00031   Treasure gold cross
-   0x35   Plane 1   SPR00032   Treasure gold cup
-   0x36   Plane 1   SPR00033   Treasure chest
-   0x38   Plane 1   SPR00035   Blue face orb (extra life)
-   0x3A   Plane 1   SPR00037   Brown barrel
-   0x3C   Plane 1   SPR00038   Stone well, blue liquid
-   0x3D   Plane 1   SPR00039   Stone well, no liquid (empty)
-   0x3E   Plane 1   SPR00041   Flag on standing pole
-   0x5C   Plane 1              ?
-   0x5D   Plane 1              ?
-   0x5E   Plane 1              ?
-   0x5F   Plane 1              ?
-   0x60   Plane 1              ?
-   0x61   Plane 1              ?
-   0x6A   Plane 1
-   0x6B   Plane 1
-   0x6C   Plane 1              Enemy soldier in brown
-   0x6D   Plane 1              ? Enemy soldier in brown
-   0x6E   Plane 1              ? Enemy soldier in brown
-   0x6F   Plane 1              Enemy soldier in brown
-   0x7C   Plane 1   SPR00095   Dead soldier lying on the floor
-   0x8A   Plane 1              ?
-   0x91   Plane 1   SPR00050   Enemy soldier in brown
-   0x92   Plane 1   SPR00050   Enemy soldier in brown
-   0x93   Plane 1   SPR00050   Enemy soldier in brown
-   0xB0   Plane 1              ?
-   0xB4   Plane 1              ?
-   0xB5   Plane 1              ?
-   0xB6   Plane 1              ? Enemy soldier in brown
-   0xB7   Plane 1              ?
-   0xB9   Plane 1              ?
-   0xD4   Plane 1              ?
-```
+[cols0,0,0,1]
+|===
+| Map value (hex) | Map plane | Texture name | Description
+
+| 0x0D | Plane 1 |          |
+| 0x0E | Plane 1 |          |
+| 0x0F | Plane 1 |          |
+| 0x13 | Plane 1 | -        | Start point (facing north)
+| 0x14 | Plane 1 | -        | Start point (facing east)
+| 0x15 | Plane 1 | -        | Start point (facing south)
+| 0x16 | Plane 1 | -        | Start point (facing west)
+| 0x17 | Plane 1 | SPR00002 | Blue puddle(?)
+| 0x18 | Plane 1 | SPR00003 | Green barrel
+| 0x19 | Plane 1 | SPR00004 | Wood table
+| 0x1A | Plane 1 | SPR00005 | Green lamp on the floor
+| 0x1B | Plane 1 | SPR00006 | Yellow crystal chandelier in the roof
+| 0x1D | Plane 1 | SPR00008 | White bowl with brown food
+| 0x1F | Plane 1 | SPR00010 | Plant in gold pot
+| 0x20 | Plane 1 | SPR00011 | Skeleton lying on floor
+| 0x22 | Plane 1 | SPR00013 | Brown plant in blue pot
+| 0x23 | Plane 1 | SPR00014 | Blue flower pot
+| 0x24 | Plane 1 | SPR00015 | Round table
+| 0x25 | Plane 1 | SPR00016 | Green lamp in the roof
+| 0x27 | Plane 1 | SPR00018 | Knight armour statue
+| 0x2A | Plane 1 | SPR00021 | Heap of bones
+| 0x2E | Plane 1 | SPR00025 | Brown bowl
+| 0x2F | Plane 1 | SPR00026 | Chicken drumstick on plate
+| 0x30 | Plane 1 | SPR00027 | Med-kit
+| 0x31 | Plane 1 | SPR00028 | Ammo clip
+| 0x32 | Plane 1 | SPR00029 | Automatic rifle
+| 0x34 | Plane 1 | SPR00031 | Treasure gold cross
+| 0x35 | Plane 1 | SPR00032 | Treasure gold cup
+| 0x36 | Plane 1 | SPR00033 | Treasure chest
+| 0x38 | Plane 1 | SPR00035 | Blue face orb (extra life)
+| 0x3A | Plane 1 | SPR00037 | Brown barrel
+| 0x3C | Plane 1 | SPR00038 | Stone well, blue liquid
+| 0x3D | Plane 1 | SPR00039 | Stone well, no liquid (empty)
+| 0x3E | Plane 1 | SPR00041 | Flag on standing pole
+| 0x5C | Plane 1 |          | ?
+| 0x5D | Plane 1 |          | ?
+| 0x5E | Plane 1 |          | ?
+| 0x5F | Plane 1 |          | ?
+| 0x60 | Plane 1 |          | ?
+| 0x61 | Plane 1 |          | ?
+| 0x6A | Plane 1 |          |
+| 0x6B | Plane 1 |          |
+| 0x6C | Plane 1 |          | Enemy soldier in brown
+| 0x6D | Plane 1 |          | ? Enemy soldier in brown
+| 0x6E | Plane 1 |          | ? Enemy soldier in brown
+| 0x6F | Plane 1 |          | Enemy soldier in brown
+| 0x7C | Plane 1 | SPR00095 | Dead soldier lying on the floor
+| 0x8A | Plane 1 |          | ?
+| 0x91 | Plane 1 | SPR00050 | Enemy soldier in brown
+| 0x92 | Plane 1 | SPR00050 | Enemy soldier in brown
+| 0x93 | Plane 1 | SPR00050 | Enemy soldier in brown
+| 0xB0 | Plane 1 |          | ?
+| 0xB4 | Plane 1 |          | ?
+| 0xB5 | Plane 1 |          | ?
+| 0xB6 | Plane 1 |          | ? Enemy soldier in brown
+| 0xB7 | Plane 1 |          | ?
+| 0xB9 | Plane 1 |          | ?
+| 0xD4 | Plane 1 |          | ?
+
+|===
 
 .Spear of Destiny (SoD) data plane values and their texture mapping. As found on https://devinsmith.net/backups/xwolf/tiles.html[XWolf] webpage.
 ```
