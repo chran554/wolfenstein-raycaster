@@ -135,31 +135,29 @@ The cell/tile data lines are stored from top to bottom. This means if you would 
 Remember that the first cell/tile in the data is location [0, height-1] and the last cell/tile in the data plane data is at location [width-1, 0]. It can make a lot of difference when you are trying out the maps and compare them to game play videos on YouTube.
 
 .Wolfenstein data plane 0 (walls), values and their texture mapping.
-```
-   Map    Map       Texture    Description
-   value  plane     name
-   -----  -------   --------   ----------------------------------
-   0x01   Plane 0   WAL00000   Grey stone wall
-   0x02   Plane 0   WAL00002   Grey stone wall
-   0x03   Plane 0   WAL00004   Red Swastika flag on stone wall
-   0x04   Plane 0   WAL00006   Hitler frame on grey stone wall
-   0x05   Plane 0   WAL00008   cell door (closed door, empty cell)
-   0x06   Plane 0   WAL00010   Eagle in grey stone arch
-   0x07   Plane 0   WAL00012   Cell door (closed door, skeleton cell)
-   0x08   Plane 0   WAL00014   Blue stone wall
-   0x09   Plane 0   WAL00016   Blue stone wall
-   0x0A   Plane 0   WAL00018   Eagle frame on wood wall
-   0x0B   Plane 0   WAL00020   Hitler frame on wood wall
-   0x0C   Plane 0   WAL00023   Wood wall
-   0x15   Plane 0   WAL00041   Exit door
-   0x5A   Plane 0   WAL00098   Cyan door with handle to the left, either facing East-West
-   0x5B   Plane 0   WAL00098   Cyan door with handle to the left, either facing South-North
-   0x64   Plane 0   WAL00102   Elevator-ish(?) door
+[cols0,0,0,1]
+|===
+| Map value (hex) | Map plane | Texture name | Description
 
-   0x6A   Plane 0   -          Floor tiles, not used(?)
-   ...
-   0x8F
-```
+| 0x01 | Plane 0 | WAL00000 | Grey stone wall
+| 0x02 | Plane 0 | WAL00002 | Grey stone wall
+| 0x03 | Plane 0 | WAL00004 | Red Swastika flag on stone wall
+| 0x04 | Plane 0 | WAL00006 | Hitler frame on grey stone wall
+| 0x05 | Plane 0 | WAL00008 | cell door (closed door, empty cell)
+| 0x06 | Plane 0 | WAL00010 | Eagle in grey stone arch
+| 0x07 | Plane 0 | WAL00012 | Cell door (closed door, skeleton cell)
+| 0x08 | Plane 0 | WAL00014 | Blue stone wall
+| 0x09 | Plane 0 | WAL00016 | Blue stone wall
+| 0x0A | Plane 0 | WAL00018 | Eagle frame on wood wall
+| 0x0B | Plane 0 | WAL00020 | Hitler frame on wood wall
+| 0x0C | Plane 0 | WAL00023 | Wood wall
+| 0x15 | Plane 0 | WAL00041 | Exit door
+| 0x5A | Plane 0 | WAL00098 | Cyan door with handle to the left, either facing East-West
+| 0x5B | Plane 0 | WAL00098 | Cyan door with handle to the left, either facing South-North
+| 0x64 | Plane 0 | WAL00102 | Elevator-ish(?) door
+
+| 0x6A ... 0x8F | Plane 0 | - | Floor tiles, not used(?)
+|===
 
 .Wolfenstein data plane 1 (specials), values and their texture mapping.
 ```
