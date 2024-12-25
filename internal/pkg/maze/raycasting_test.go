@@ -18,7 +18,7 @@ func TestZeroDivision(t *testing.T) {
 	assert.Equal(t, math.Inf(1), v)
 }
 
-func wallValueToStructure(v int) raycastmap.Structure {
+func wallValueToStructure(v int) *raycastmap.Structure {
 	if v == 0 {
 		return raycastmap.StructureNone
 	}
@@ -52,7 +52,9 @@ func TestRaycastDistance(t *testing.T) {
 	assert.Equal(t, 9.0, verticalIntersectionInfo2.IntersectionPoint.Y)
 }
 
-func TestRaycast(t *testing.T) {
+func TestRaycastViewToConsole(t *testing.T) {
+	t.Skip("Skipping test that print result to screen")
+
 	var observerX = 22.0
 	var observerY = 12.0
 

@@ -23,23 +23,21 @@ Wolfenstein 3D have 9 levels or level maps if you like.
 
 When you cleared one level (reached the end point in the map) the game loaded the next level, and the player spawned in the start position of the new map.
 
-The maps, or rather the data, for all levels are stored in a single file `GAMEMAPS.WL1`. There is a sidecar file `MAPHEAD.WL1` that contain information on which location different data is stored in the `GAMEMAPS.WL1` file.
+The maps, or rather the data, for all levels are stored in a single file `GAMEMAPS.WL1`. There is a sidecar file `MAPHEAD.WL1` that contain information on which locations or offsets different data is stored in the `GAMEMAPS.WL1` file.
 
-The game levels were constructed using square 2D building blocks that filled up the space of the level like a square on a chessboard. Either that square/cell was filled with a solid matter like a wall (or door) that could not be moved through, or it was open space. This gave the maps and levels of the game a kind of chunky feeling as there are always square thick walls and perfect 90-degree angles in each corner all through out the game.
+The game levels were constructed using square 2D building blocks that filled up the space of the level like a square on a chessboard. Either that square/cell was filled with a solid matter like a wall (or door) that could not be moved through, or it was open space. This gave the maps and levels of the game a kind of chunky feeling as there are always square thick walls and perfect 90-degree angles in each corner all throughout the game.
 
-All levels were played in closed space. No open space without any wall in any direction.
+All levels were played in closed space indoors. No open space without any wall in any direction.
 
 Each level map had three layers, all with the same size as the others, where each layer added its own information to a cell. All layers for all levels in Wolfenstein 3D were made up of 64x64 cells. Although it is not a limitation of the map format.
 
 * Layer 1: Contains the wall and door information.
 * Layer 2: Contains the information on enemies, items and decorations.
-* Layer 3: Were never used for anything (in Wolfenstein 3D) at least. Although the map format was used for other games as well.
+* Layer 3: Was never used for anything (in Wolfenstein 3D at least). Although the map format was used by other games as well.
 
 == Map data, specifics
 
-Almost all information on the map format on this page is derived from the XXX page.
-
-https://moddingwiki.shikadi.net/wiki/GameMaps_Format[Game maps format]
+Almost all information on the map format on this page is derived from the https://moddingwiki.shikadi.net/wiki/GameMaps_Format[Game maps format] page.
 
 === The content and structure  of `MAPHEAD.WL1`
 
@@ -85,7 +83,7 @@ The level header is always 38 bytes and contains offsets to the data planes, wid
 
 ==== The content and structure of a "data plane"
 
-The "data plane" data of a level is located at an offset from  the GAMEMAPS file start. It also has a length. Both the offset and length are specified in the "level header" for the level.
+The "data plane" data of a level is located at an offset from the GAMEMAPS file start. It also has a length. Both the offset and length are specified in the "level header" for the level.
 
 If the content of the data plane is compressed, the length in the level header specify the length of the compressed data, not the uncompressed length.
 The uncompressed size of a data plane is always width * height * <word size> bytes. The word size for map level data is 2 bytes as the tile/cell values are stored as UINT16LE.
@@ -104,25 +102,15 @@ If the data is compressed twice with, say RLEW and then Carmack, you will need t
 (For Wolfenstein 3D only RLEW with Carmack is used on the data plane data.)
 
 .Game map data plane structure (when data is initially compressed with RLEW and then Carmack)
-----
-+----------------------+---------------------------------------------------------------+
-| Uncompressed size    | (Carmack compressed data)                                     |
-| UINT16LE (2 bytes)   |                                                               |
-|                      | +----------------------+------------------------------------+ |
-|                      | | Uncompressed size    | (RLEW compressed data)             | |
-|                      | | UINT16LE (2 bytes)   |                                    | |
-|                      | |                      | [UINT16LE data plane data stream]  | |
-|                      | +----------------------+------------------------------------+ |
-+----------------------+---------------------------------------------------------------+
-----
+image::compressionlayers.png[Compressed game map data plane structure]
 
-There is no flag or information in the headers to see what compression algorithms that are applied to the data plane data. You can, however, deduce the algorithms used to compress the data.
+There is no flag or information in the headers to see what compression algorithms that are applied to the data plane data. You can, however, deduce the algorithms used to compress the data by simple data inspection.
 
 1. A data plane data is always initially compressed with RLEW compression. The magic word/sequence used to signal run length fill is the "magic" word found at the very beginning of the MAPHEAD file. +
- See also <<The content and structure of `GAMEMAPS.WL1`>> and <<_rlew_run_length_word>>.
+ See also <<The content and structure of `GAMEMAPS.WL1`>> and <<rlew_run_length_word>>.
 
 2. A secondary compression may have been applied after the RLEW compression. That compression may have been either Carmack or Huffman. +
- See also <<_carmack>>.
+ See also <<carmack>>.
 
 3. Based on the compressed data content, you can deduce what algorithms that have been used. By reading the two first words of the data plane data (both UINT16LE) you can determine if the data is only compressed with RLEW, or if it is compressed with RLEW and then compressed with Carmack. See section on data plane data content and structure.
 
@@ -131,7 +119,7 @@ There is no flag or information in the headers to see what compression algorithm
 To detect data compressed only with RLEW check if the first word of the data chunk (the prepended UINT16LE value for the decompressed size) matches the calculated data plane size. If it matches, then the data is only RLEW compressed as the data is always compressed with RLEW.
 
 To detect data compressed with RLEW and then compressed with Carmack check if the _second_ word (of type UINT16LE) of the data chunk matches the calculated data plane size. If it matches, then the data is compressed with RLEW and then compressed with Carmack. +
-The thing is, when the compressed RLEW data with its prepended decompressed size, is compressed with Carmack, the first word of the Carmack compressed data is preserved. That first word is the prepended decompressed size to the compressed RLEW data. As the Carmack compressed data is in turn prepended with its decompressed size the RLEW decompressed size ends up in the _second word position_ of the data plane data.
+The thing is, when the compressed RLEW data (with its prepended decompressed size), is compressed with Carmack, the first word of the Carmack compressed data is preserved. That first word is the decompressed size prepended to the compressed RLEW data. As the Carmack compressed data is in turn prepended with its decompressed size the RLEW decompressed size ends up in the _second word position_ of the data plane data.
 
 === Values, Walls, Doors, Items, Enemies etc
 
@@ -146,89 +134,96 @@ Trivia note for (at least) Wolfenstein 3D. +
 The cell/tile data lines are stored from top to bottom. This means if you would print the map line by line downwards, you would get the map correctly rendered as it is played in the game. +
 Remember that the first cell/tile in the data is location [0, height-1] and the last cell/tile in the data plane data is at location [width-1, 0]. It can make a lot of difference when you are trying out the maps and compare them to game play videos on YouTube.
 
-.Wolfenstein data plane values and their texture mapping.
+.Wolfenstein data plane 0 (walls), values and their texture mapping.
 ```
-   Map    Map                 Texture    Description
-   value  plane               name
-   -----  ---------------     --------   ----------------------------------
-   0x01   Plane 0 (Walls)     WAL00000   Grey stone wall
-   0x02   Plane 0 (Walls)     WAL00002   Grey stone wall
-   0x03   Plane 0 (Walls)     WAL00004   Red Swastika flag on stone wall
-   0x04   Plane 0 (Walls)     WAL00006   Hitler frame on grey stone wall
-   0x05   Plane 0 (Walls)     WAL00008   cell door (closed door, empty cell)
-   0x06   Plane 0 (Walls)     WAL00010   Eagle in grey stone arch
-   0x07   Plane 0 (Walls)     WAL00012   cell door (closed door, skeleton cell)
-   0x08   Plane 0 (Walls)     WAL00014   Blue stone wall
-   0x09   Plane 0 (Walls)     WAL00016   Blue stone wall
-   0x0A   Plane 0 (Walls)     WAL00018   Eagle frame on wood wall
-   0x0B   Plane 0 (Walls)     WAL00020   Hitler frame on wood wall
-   0x0C   Plane 0 (Walls)     WAL00023   Wood wall
-   0x15   Plane 0 (Walls)     WAL00041   Exit door
-   0x64   Plane 0 (Walls)     WAL00102   Elevator-ish(?) door
+   Map    Map       Texture    Description
+   value  plane     name
+   -----  -------   --------   ----------------------------------
+   0x01   Plane 0   WAL00000   Grey stone wall
+   0x02   Plane 0   WAL00002   Grey stone wall
+   0x03   Plane 0   WAL00004   Red Swastika flag on stone wall
+   0x04   Plane 0   WAL00006   Hitler frame on grey stone wall
+   0x05   Plane 0   WAL00008   cell door (closed door, empty cell)
+   0x06   Plane 0   WAL00010   Eagle in grey stone arch
+   0x07   Plane 0   WAL00012   Cell door (closed door, skeleton cell)
+   0x08   Plane 0   WAL00014   Blue stone wall
+   0x09   Plane 0   WAL00016   Blue stone wall
+   0x0A   Plane 0   WAL00018   Eagle frame on wood wall
+   0x0B   Plane 0   WAL00020   Hitler frame on wood wall
+   0x0C   Plane 0   WAL00023   Wood wall
+   0x15   Plane 0   WAL00041   Exit door
+   0x5A   Plane 0   WAL00098   Cyan door with handle to the left, either facing East-West
+   0x5B   Plane 0   WAL00098   Cyan door with handle to the left, either facing South-North
+   0x64   Plane 0   WAL00102   Elevator-ish(?) door
 
-   0x6A   Plane 0 (Walls)     -          Floor tiles, not used(?)
+   0x6A   Plane 0   -          Floor tiles, not used(?)
    ...
    0x8F
+```
 
-   0x0D   Plane 1 (Special)
-   0x0E   Plane 1 (Special)
-   0x0F   Plane 1 (Special)
-   0x13   Plane 1 (Special)   -          Start point (facing north)
-   0x14   Plane 1 (Special)   -          Start point (facing east)
-   0x15   Plane 1 (Special)   -          Start point (facing south)
-   0x16   Plane 1 (Special)   -          Start point (facing west)
-   0x17   Plane 1 (Special)   SPR00002   Blue puddle(?)
-   0x18   Plane 1 (Special)   SPR00003   Green barrel
-   0x19   Plane 1 (Special)   SPR00004   Wood table
-   0x1A   Plane 1 (Special)   SPR00005   Green lamp on the floor
-   0x1B   Plane 1 (Special)   SPR00006   Yellow crystal chandelier in the roof
-   0x1D   Plane 1 (Special)   SPR00008   White bowl with brown food
-   0x1F   Plane 1 (Special)   SPR00010   Plant in gold pot
-   0x20   Plane 1 (Special)   SPR00011   Skeleton lying on floor
-   0x22   Plane 1 (Special)   SPR00013   Brown plant in blue pot
-   0x23   Plane 1 (Special)   SPR00014   Blue flower pot
-   0x24   Plane 1 (Special)   SPR00015   Round table
-   0x25   Plane 1 (Special)   SPR00016   Green lamp in the roof
-   0x27   Plane 1 (Special)   SPR00018   Knight armour statue
-   0x2A   Plane 1 (Special)   SPR00021   Heap of bones
-   0x2E   Plane 1 (Special)   SPR00025   Brown bowl
-   0x2F   Plane 1 (Special)   SPR00026   Chicken drumstick on plate
-   0x30   Plane 1 (Special)   SPR00027   Med-kit
-   0x31   Plane 1 (Special)   SPR00028   Ammo clip
-   0x32   Plane 1 (Special)   SPR00029   Automatic rifle
-   0x34   Plane 1 (Special)   SPR00031   Treasure gold cross
-   0x35   Plane 1 (Special)   SPR00032   Treasure gold cup
-   0x36   Plane 1 (Special)   SPR00033   Treasure chest
-   0x38   Plane 1 (Special)   SPR00035   Blue face orb (extra life)
-   0x3A   Plane 1 (Special)   SPR00037   Brown barrel
-   0x3C   Plane 1 (Special)   SPR00038   Stone well, blue liquid
-   0x3E   Plane 1 (Special)   SPR00041   Flag on standing pole
-   0x5A   Plane 1 (Special)   SPR00098   Cyan door with handle to the left either facing East-West
-   0x5B   Plane 1 (Special)   SPR00098   Cyan door with handle to the left either facing South-North
-   0x5C   Plane 1 (Special)              ?
-   0x5D   Plane 1 (Special)              ?
-   0x5E   Plane 1 (Special)              ?
-   0x5F   Plane 1 (Special)              ?
-   0x60   Plane 1 (Special)              ?
-   0x61   Plane 1 (Special)              ?
-   0x6A   Plane 1 (Special)
-   0x6B   Plane 1 (Special)
-   0x6C   Plane 1 (Special)              Enemy soldier in brown
-   0x6D   Plane 1 (Special)              ? Enemy soldier in brown
-   0x6E   Plane 1 (Special)              ? Enemy soldier in brown
-   0x6F   Plane 1 (Special)              Enemy soldier in brown
-   0x7C   Plane 1 (Special)   SPR00095   Dead soldier lying on the floor
-   0x8A   Plane 1 (Special)              ?
-   0x91   Plane 1 (Special)   SPR00050   Enemy soldier in brown
-   0x92   Plane 1 (Special)   SPR00050   Enemy soldier in brown
-   0x93   Plane 1 (Special)   SPR00050   Enemy soldier in brown
-   0xB0   Plane 1 (Special)              ?
-   0xB4   Plane 1 (Special)              ?
-   0xB5   Plane 1 (Special)              ?
-   0xB6   Plane 1 (Special)              ? Enemy soldier in brown
-   0xB7   Plane 1 (Special)              ?
-   0xB9   Plane 1 (Special)              ?
-   0xD4   Plane 1 (Special)              ?
+.Wolfenstein data plane 1 (specials), values and their texture mapping.
+```
+   Map    Map       Texture    Description
+   value  plane     name
+   -----  -------   --------   ----------------------------------
+   0x0D   Plane 1
+   0x0E   Plane 1
+   0x0F   Plane 1
+   0x13   Plane 1   -          Start point (facing north)
+   0x14   Plane 1   -          Start point (facing east)
+   0x15   Plane 1   -          Start point (facing south)
+   0x16   Plane 1   -          Start point (facing west)
+   0x17   Plane 1   SPR00002   Blue puddle(?)
+   0x18   Plane 1   SPR00003   Green barrel
+   0x19   Plane 1   SPR00004   Wood table
+   0x1A   Plane 1   SPR00005   Green lamp on the floor
+   0x1B   Plane 1   SPR00006   Yellow crystal chandelier in the roof
+   0x1D   Plane 1   SPR00008   White bowl with brown food
+   0x1F   Plane 1   SPR00010   Plant in gold pot
+   0x20   Plane 1   SPR00011   Skeleton lying on floor
+   0x22   Plane 1   SPR00013   Brown plant in blue pot
+   0x23   Plane 1   SPR00014   Blue flower pot
+   0x24   Plane 1   SPR00015   Round table
+   0x25   Plane 1   SPR00016   Green lamp in the roof
+   0x27   Plane 1   SPR00018   Knight armour statue
+   0x2A   Plane 1   SPR00021   Heap of bones
+   0x2E   Plane 1   SPR00025   Brown bowl
+   0x2F   Plane 1   SPR00026   Chicken drumstick on plate
+   0x30   Plane 1   SPR00027   Med-kit
+   0x31   Plane 1   SPR00028   Ammo clip
+   0x32   Plane 1   SPR00029   Automatic rifle
+   0x34   Plane 1   SPR00031   Treasure gold cross
+   0x35   Plane 1   SPR00032   Treasure gold cup
+   0x36   Plane 1   SPR00033   Treasure chest
+   0x38   Plane 1   SPR00035   Blue face orb (extra life)
+   0x3A   Plane 1   SPR00037   Brown barrel
+   0x3C   Plane 1   SPR00038   Stone well, blue liquid
+   0x3D   Plane 1   SPR00039   Stone well, no liquid (empty)
+   0x3E   Plane 1   SPR00041   Flag on standing pole
+   0x5C   Plane 1              ?
+   0x5D   Plane 1              ?
+   0x5E   Plane 1              ?
+   0x5F   Plane 1              ?
+   0x60   Plane 1              ?
+   0x61   Plane 1              ?
+   0x6A   Plane 1
+   0x6B   Plane 1
+   0x6C   Plane 1              Enemy soldier in brown
+   0x6D   Plane 1              ? Enemy soldier in brown
+   0x6E   Plane 1              ? Enemy soldier in brown
+   0x6F   Plane 1              Enemy soldier in brown
+   0x7C   Plane 1   SPR00095   Dead soldier lying on the floor
+   0x8A   Plane 1              ?
+   0x91   Plane 1   SPR00050   Enemy soldier in brown
+   0x92   Plane 1   SPR00050   Enemy soldier in brown
+   0x93   Plane 1   SPR00050   Enemy soldier in brown
+   0xB0   Plane 1              ?
+   0xB4   Plane 1              ?
+   0xB5   Plane 1              ?
+   0xB6   Plane 1              ? Enemy soldier in brown
+   0xB7   Plane 1              ?
+   0xB9   Plane 1              ?
+   0xD4   Plane 1              ?
 ```
 
 .Spear of Destiny (SoD) data plane values and their texture mapping. As found on https://devinsmith.net/backups/xwolf/tiles.html[XWolf] webpage.

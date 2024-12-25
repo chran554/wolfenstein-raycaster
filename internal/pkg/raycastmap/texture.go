@@ -33,15 +33,19 @@ func NewTextureWithOverlay(imageFilename string, overlayFilename string) *Textur
 	return texture
 }
 
-func NewTexture(imageFilename string) *Texture {
-	texture := &Texture{}
+func NewTexture(image image.Image) *Texture {
+	texture := &Texture{img: image}
 
-	texture.img, _ = readImage(imageFilename)
-	if texture.img != nil {
-		texture.dominantColor = averageColor(texture.img)
+	if image != nil {
+		texture.dominantColor = averageColor(image)
 	}
 
 	return texture
+}
+
+func NewTextureFromFile(imageFilename string) *Texture {
+	img, _ := readImage(imageFilename)
+	return NewTexture(img)
 }
 
 func averageColor(textureImage image.Image) color.RGBA {

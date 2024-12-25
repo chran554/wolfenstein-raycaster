@@ -263,10 +263,10 @@ func paintRayMap(mapImage *image.RGBA, observer *maze.Vector, m raycastmap.Map) 
 	hw := w / 2
 	hh := h / 2
 
-	// Clear with black and fully transparent color
+	// Clear with black opaque (non-transparent) color
 	for y := 0; y < h; y++ {
 		for x := 0; x < w; x++ {
-			mapImage.Set(x, y, color.RGBA{})
+			mapImage.Set(x, y, color.RGBA{A: 255})
 		}
 	}
 
@@ -280,8 +280,14 @@ func paintRayMap(mapImage *image.RGBA, observer *maze.Vector, m raycastmap.Map) 
 			mapy := iy + yOffset
 
 			c := color.Color(color.RGBA{A: 196})
-			if m.WallAt(mapx, mapy) {
-				c = m.StructureAt(mapx, mapy).Texture.DominantColor()
+			if m.ObstacleAt(mapx, mapy) {
+				structure := m.StructureAt(mapx, mapy)
+				special := m.SpecialAt(mapx, mapy)
+				if structure != nil && structure.Texture != nil {
+					c = structure.Texture.DominantColor()
+				} else if special != nil && special.Texture != nil {
+					c = special.Texture.DominantColor()
+				}
 			}
 
 			mapImage.Set(2*ix, h-2*iy, c)
@@ -318,7 +324,7 @@ func paintImageTexturized(img *image.RGBA, pixelColumnInfos []maze.IntersectionI
 
 		// Draw scaled texture pixel column
 		texture := pixelColumnInfo.Wall.Structure.Texture
-		if pixelColumnInfo.Side == 1 && pixelColumnInfo.Wall.Structure.Texture2 != nil && useObserverLight == 0 {
+		if pixelColumnInfo.Side == 0 && pixelColumnInfo.Wall.Structure.Texture2 != nil && useObserverLight == 0 {
 			texture = pixelColumnInfo.Wall.Structure.Texture2 // Use darker texture on East-West facing wall sides of a cell
 		}
 

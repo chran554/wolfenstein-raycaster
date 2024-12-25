@@ -4,7 +4,7 @@ type SliceMap struct {
 	mapData            [][]int
 	startX, startY     float64
 	startDir           float64
-	valueToStructureFn func(int) Structure
+	valueToStructureFn func(int) *Structure
 }
 
 // NewSliceMap encapsulates map data in the form of a 2D slice of int.
@@ -22,12 +22,16 @@ type SliceMap struct {
 //	| 2 5 8
 //	| 1 4 7
 //	+-------> x
-func NewSliceMap(mapData [][]int, startX, startY float64, startDir float64, valueToStructureFn func(int) Structure) SliceMap {
+func NewSliceMap(mapData [][]int, startX, startY float64, startDir float64, valueToStructureFn func(int) *Structure) SliceMap {
 	return SliceMap{mapData: mapData, startX: startX, startY: startY, startDir: startDir, valueToStructureFn: valueToStructureFn}
 }
 
-func (sm SliceMap) StructureAt(x, y int) Structure {
+func (sm SliceMap) StructureAt(x, y int) *Structure {
 	return sm.valueToStructureFn(sm.mapData[x][y])
+}
+
+func (sm SliceMap) SpecialAt(_, _ int) *Structure {
+	return &Structure{}
 }
 
 func (sm SliceMap) WallAt(x, y int) bool {

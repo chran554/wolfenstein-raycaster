@@ -2,8 +2,13 @@ package raycastmap
 
 import (
 	"fmt"
+	"github.com/anthonynsimon/bild/blend"
 	"github.com/stretchr/testify/assert"
+	"image"
+	"image/color"
+	"image/png"
 	"maze/internal/pkg/wolf3d"
+	"os"
 	"slices"
 	"strconv"
 	"strings"
@@ -11,6 +16,8 @@ import (
 )
 
 func TestPrintWolfensteinMapValues(t *testing.T) {
+	t.Skip("Skipping test that print map to console")
+
 	levelMaps, err := wolf3d.Wolfenstein3DMap()
 	assert.NoError(t, err)
 
@@ -70,6 +77,8 @@ func TestPrintWolfensteinMapValues(t *testing.T) {
 }
 
 func TestPrintWolfensteinMap(t *testing.T) {
+	t.Skip("Skipping test that print map to console")
+
 	levelMaps, err := wolf3d.Wolfenstein3DMap()
 	assert.NoError(t, err)
 
@@ -133,4 +142,100 @@ func TestPrintWolfensteinMap(t *testing.T) {
 		fmt.Println()
 	}
 	fmt.Println("Start point at: ", startPoint.X, startPoint.Y)
+}
+
+func TestPaintWolfensteinMap(t *testing.T) {
+	cellWidth := 64
+
+	level := 0
+
+	levelMap, err := NewWolfensteinMap(level)
+	assert.NoError(t, err)
+
+	mapImage := image.NewRGBA(image.Rect(level, level, levelMap.Width()*cellWidth, levelMap.Height()*cellWidth))
+
+	UnknownTexture := NewTextureFromFile("overlay/question-mark.png")
+
+	startCell := Cell{Structure: StructureNone}
+
+	for y := level; y < levelMap.Height(); y++ {
+		for x := level; x < levelMap.Width(); x++ {
+			structure := levelMap.StructureAt(x, y)
+			special := levelMap.SpecialAt(x, y)
+
+			if special == SpecialStartPointFacingNorth || special == SpecialStartPointFacingSouth || special == SpecialStartPointFacingEast || special == SpecialStartPointFacingWest {
+				startCell = Cell{X: x, Y: y, Structure: special}
+			}
+
+			if structure == StructureExitDoor && structure.Texture2 != nil {
+				// Exit door icon uses texture 2 (exit room sides are texture 1)
+				exitTexture := structure.Texture.img // Elevator handle bars walls
+
+				noWestWall := levelMap.StructureAt(x-1, y) == StructureNone
+				noEastWall := levelMap.StructureAt(x+1, y) == StructureNone
+				if noWestWall || noEastWall {
+					exitTexture = structure.Texture2.img // Elevator control panel wall
+				}
+
+				renderMapIcon(mapImage, x, levelMap.Height()-1-y, cellWidth, exitTexture)
+			} else if structure != StructureNone && structure.Texture != nil {
+				renderMapIcon(mapImage, x, levelMap.Height()-1-y, cellWidth, structure.Texture.img)
+			}
+
+			if special != SpecialNone && special.Texture != nil {
+				renderMapIcon(mapImage, x, levelMap.Height()-1-y, cellWidth, special.Texture.img)
+			} else if special != SpecialNone {
+				renderMapIcon(mapImage, x, levelMap.Height()-1-y, cellWidth, UnknownTexture.img)
+			}
+		}
+	}
+
+	renderMapIcon(mapImage, startCell.X, levelMap.Height()-1-startCell.Y, cellWidth, SpecialBlueOrb.Texture.img)
+
+	renderCellBorders(mapImage, levelMap.Width(), levelMap.Height(), cellWidth)
+
+	// Save map image
+	imageFile, err := os.Create(fmt.Sprintf("Wolfenstein3D_level%d.png", level))
+	assert.NoError(t, err)
+	err = png.Encode(imageFile, mapImage)
+	assert.NoError(t, err)
+	err = imageFile.Close()
+	assert.NoError(t, err)
+}
+
+func renderCellBorders(mapImage *image.RGBA, width int, height int, cellWidth int) {
+	c := color.NRGBA{R: 107, G: 107, B: 107, A: 255} // Same color as the floor in the maze
+
+	for cellY := 0; cellY < height; cellY++ {
+		for cellX := 0; cellX < width; cellX++ {
+			for pixel := 0; pixel < cellWidth; pixel++ {
+				mapImage.Set(cellX*cellWidth+pixel, cellY*cellWidth, c)
+				mapImage.Set(cellX*cellWidth, cellY*cellWidth+pixel, c)
+
+				if cellX == width-1 {
+					mapImage.Set((cellX+1)*cellWidth-1, cellY*cellWidth+pixel, c)
+				}
+				if cellY == height-1 {
+					mapImage.Set(cellX*cellWidth+pixel, (cellY+1)*cellWidth-1, c)
+				}
+			}
+		}
+	}
+}
+
+func renderMapIcon(mapImage *image.RGBA, cellX int, cellY int, cellSize int, texture image.Image) {
+	textureWidth := texture.Bounds().Dx()
+	textureHeight := texture.Bounds().Dy()
+
+	startX := cellX*cellSize + (cellSize-textureWidth)/2
+	startY := cellY*cellSize + (cellSize-textureHeight)/2
+
+	subMapImage := mapImage.SubImage(image.Rect(startX, startY, startX+textureWidth, startY+textureHeight))
+	resultImage := blend.Normal(subMapImage, texture)
+
+	for y := 0; y < textureHeight; y++ {
+		for x := 0; x < textureWidth; x++ {
+			mapImage.Set(startX+x, startY+y, resultImage.At(x, y))
+		}
+	}
 }

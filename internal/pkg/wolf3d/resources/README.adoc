@@ -3,7 +3,7 @@
 This is map data from the 1992 game "Wolfenstein 3D" (a.k.a. "Wolf 3D").
 Wolfenstein 3D is Shareware and downloadable at https://archive.org/details/wolf3dsw
 
-It is considered ground breaking for gaming as it is considered being the first 3D first person shooter game made.
+It is considered groundbreaking for gaming as it is considered being the first 3D first-person shooter game made.
 
 == Data file Specs
 
@@ -21,10 +21,10 @@ The map header may be embedded in the game's main executable.
 The map header file (MAPHEAD) is of varying length and contains three main types of data.
 
 1. The first is the magic word or flag used for RLEW compression, which is almost always $ABCD in the original files. It could be changed to any other value if necessary.
-2. The second is 100 level pointers which give the location of the start of level data in the GAMEMAPS file, relative to the start of that file. A value less than 1 indicates no level (generally 0, but occasionally -1 (0xFFFFFFFF) is used). Using -1 should be preferred over 0, as the pre-Wolf3D version of the engine will treat any negative value as "a non existant map" [sic!] and quit with an appropriate error message, while 0 will cause it to try reading a level header at offset 0 (where the "TED5v1.0" string is usually stored), which will cause all kinds of errors as there is clearly no valid level header at that offset.
+2. The second is 100 level pointers that give the location of the start of level data in the GAMEMAPS file, relative to the start of that file. A value less than 1 indicates no level (generally 0, but occasionally -1 (0xFFFFFFFF) is used). Using -1 should be preferred over 0, as the pre-Wolf3D version of the engine will treat any negative value as "a non existent map" [sic!] and quit with an appropriate error message, while 0 will cause it to try reading a level header at offset 0 (where the "TED5v1.0" string is usually stored), which will cause all kinds of errors as there is clearly no valid level header at that offset.
 3. The third is the tileinfo data, which contains tile properties for each tile used in level creation. (These are masked and unmasked and either 8x8, 16x16 or 32x32.)
 
-Many programs treat the tileinfo as a separate file from the MAPHEAD and it is possible to modify a game in this manner. Indeed, some games such as Wolfenstein 3-D do not have any tileinfo data at all in the map header file (giving a total file length of 402 bytes.) However TED5 works with any tileinfo data in the MAPHEAD.
+Many programs treat the tileinfo as a separate file from the MAPHEAD and it is possible to modify a game in this manner. Indeed, some games such as Wolfenstein 3-D do not have any tileinfo data at all in the map header file (giving a total file length of 402 bytes.) However, TED5 works with any tileinfo data in the MAPHEAD.
 
 .Map header
 |===
@@ -39,7 +39,7 @@ Many programs treat the tileinfo as a separate file from the MAPHEAD and it is p
 
 The GAMEMAPS file consists of the string "TED5v1.0" and a number of compressed chunks of varying length.
 
-Each level in the file will have from two to four chunks (usually four) depending on the game, with all levels in a given game having the same number of chunks. These are the level header and 1-3 planes (foreground, background and sprite/info.) The chunks are in no particular order and it is possible to read through the entire file decompressing chunks as they're found.
+Each level in the file will have from two to four chunks, (usually four) depending on the game, with all levels in a given game having the same number of chunks. These are the level header and 1-3 planes (foreground, background and sprite/info.) The chunks are in no particular order, and it is possible to read through the entire file decompressing chunks as they're found.
 
 Chunks are ordered by the MAPHEAD file, which will point to the GAMEMAPS level header chunks which in turn contain pointers to the other GAMEMAPS chunks used by that level.
 
@@ -53,7 +53,7 @@ The expanded size of each map plane is the size of a word (UINT16LE) times the w
 
 Plane 0 is background using unmasked tiles, plane 1 is foreground and uses masked tiles, and plane 2 is sprite/info. Levels must contain a background plane and usually an infoplane.
 
-For the compressed size of each level plane, a value of 0 indicates the plane does not exist. The offset value for unused planes appears to be set to a random number with the most significant byte set to 0xFF, making it either a negative number or an offset close to the 4 gigabyte range. The games only check the compressed size and ignore the offset if the size is 0.
+For the compressed size of each level plane, a value of 0 indicates the plane does not exist. The offset value for unused planes appears to be set to a random number with the most significant byte set to 0xFF, making it either a negative number or an offset close to the 4-gigabyte range. The games only check the compressed size and ignore the offset if the size is 0.
 
 Note that Wolf3D is hard-coded to always load the first two planes, even if the compressed size of a plane is 0. Wolf3D also ignores the width and height stored in the level header and just assumes the level is 64x64 tiles. This also applies to Blake Stone and probably any other game based on the Wolf3D code.
 
@@ -63,9 +63,9 @@ All versions of the "Id Software Caching Manager" ignore the expanded size value
 |===
 |Offset	|Type	|Name	|Description
 
-|0	|INT32LE	|offPlane0	| Offset in GAMEMAPS to beginning of compressed plane 0 data (or <= 0 if plane is not present)
-|4 |INT32LE |offPlane1	|Offset in GAMEMAPS to beginning of compressed plane 1 data (or <= 0 if plane is not present)
-|8 |INT32LE |offPlane2	|Offset in GAMEMAPS to beginning of compressed plane 2 data (or <= 0 if plane is not present)
+|0	|INT32LE	|offPlane0	| Offset in GAMEMAPS to the beginning of compressed plane 0 data (or <= 0 if plane is not present)
+|4 |INT32LE |offPlane1	|Offset in GAMEMAPS to the beginning of compressed plane 1 data (or <= 0 if plane is not present)
+|8 |INT32LE |offPlane2	|Offset in GAMEMAPS to the beginning of compressed plane 2 data (or <= 0 if plane is not present)
 |12 |UINT16LE |lenPlane0	|Length of compressed plane 0 data (in bytes)
 |14 |UINT16LE |lenPlane1	|Length of compressed plane 1 data (in bytes)
 |16 |UINT16LE |lenPlane2	|Length of compressed plane 2 data (in bytes)

@@ -75,11 +75,11 @@ var (
 )
 
 var (
-	TestMap1 = NewSliceMap(worldMap1, 22.0, 12.0, math.Pi, structure)
-	TestMap2 = NewSliceMap(worldMap2, 22.0, 11.5, math.Pi, structure)
+	TestMap1 = NewSliceMap(worldMap1, 22.0, 12.0, math.Pi, mapValueToStructure)
+	TestMap2 = NewSliceMap(worldMap2, 22.0, 11.5, math.Pi, mapValueToStructure)
 )
 
-func structure(mapValue int) Structure {
+func mapValueToStructure(mapValue int) *Structure {
 	switch mapValue {
 	case 0:
 		return StructureNone

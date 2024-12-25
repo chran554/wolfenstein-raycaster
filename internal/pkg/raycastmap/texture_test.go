@@ -14,7 +14,7 @@ func TestReadScaledPixelColumn(t *testing.T) {
 
 	const bytesPerPixel = 4
 
-	texture := NewTexture("testdata/WAL00000.png")
+	texture := NewTextureFromFile("testdata/WAL00000.png")
 
 	dstWidth := 1024
 	dstHeight := 1024
