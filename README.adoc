@@ -48,27 +48,27 @@ Fyne is *not* aimed to be a game render library but a common application UI.
 
 .Render settings: ambient=full, dynamic light (observer)=off, texture=on. (This is rendering that is most true to the original game that could only use a 256-color palette.)
 [link=documentation/images/maze-ambient_full-dynamic_off-texture_on.png]
-image::documentation/images/maze-ambient_full-dynamic_off-texture_on.png[Wolfenstein 3D (level 0),300,300]
+image::documentation/images/maze-ambient_full-dynamic_off-texture_on.png[Wolfenstein 3D (level 0),width=300]
 
 .Render settings: ambient=low, dynamic light (observer)=off, texture=off.
 [link=documentation/images/maze-ambient_low-dynamic_off-texture_off.png]
-image::documentation/images/maze-ambient_low-dynamic_off-texture_off.png[Wolfenstein 3D (level 0),300,300]
+image::documentation/images/maze-ambient_low-dynamic_off-texture_off.png[Wolfenstein 3D (level 0),width=300]
 
 .Render settings: ambient=full, dynamic light (observer)=off, texture=off.
 [link=documentation/images/maze-ambient_full-dynamic_off-texture_off.png]
-image::documentation/images/maze-ambient_full-dynamic_off-texture_off.png[Wolfenstein 3D (level 0),300,300]
+image::documentation/images/maze-ambient_full-dynamic_off-texture_off.png[Wolfenstein 3D (level 0),width=300]
 
 .Render settings: ambient=low, dynamic light (observer)=on, texture=off.
 [link=documentation/images/maze-ambient_low-dynamic_on-texture_off.png]
-image::documentation/images/maze-ambient_low-dynamic_on-texture_off.png[Wolfenstein 3D (level 0),300,300]
+image::documentation/images/maze-ambient_low-dynamic_on-texture_off.png[Wolfenstein 3D (level 0),width=300]
 
 .Render settings: ambient=low, dynamic light (observer)=off, texture=on.
 [link=documentation/images/maze-ambient_low-dynamic_off-texture_on.png]
-image::documentation/images/maze-ambient_low-dynamic_off-texture_on.png[Wolfenstein 3D (level 0),300,300]
+image::documentation/images/maze-ambient_low-dynamic_off-texture_on.png[Wolfenstein 3D (level 0),width=300]
 
 .Render settings: ambient=low, dynamic light (observer)=on, texture=on.
 [link=documentation/images/maze-ambient_low-dynamic_on-texture_on.png]
-image::documentation/images/maze-ambient_low-dynamic_on-texture_on.png[Wolfenstein 3D (level 0),300,300]
+image::documentation/images/maze-ambient_low-dynamic_on-texture_on.png[Wolfenstein 3D (level 0),width=300]
 
 
 == Wolfenstein 3D map
@@ -77,7 +77,7 @@ Information on how the Wolfenstein 3D map data is stored, structured and parsed 
 
 .A map generated from the level data of Wolfenstein 3D (level 0)
 [link=documentation/wolfenstein3d-map-level0.png]
-image::documentation/wolfenstein3d-map-level0.png[Wolfenstein 3D (level 0),300,300]
+image::documentation/wolfenstein3d-map-level0.png[Wolfenstein 3D (level 0),width=300]
 
 To regenerate the map image, activate the test `TestPaintWolfensteinMap` (remove the skip-test call at the start of the test) and then run the test. +
 `$ go test -run TestPaintWolfensteinMap ./...`
