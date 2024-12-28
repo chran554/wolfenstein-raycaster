@@ -31,6 +31,7 @@ I have written my own summary on the link:documentation/raycasting.adoc[raycasti
 
 Screenshots from running the maze using map (level 0) and textures from Wolfenstein 3D.
 
+[cols="0,1,2"]
 |===
 | Render option | Valid values | Description
 
