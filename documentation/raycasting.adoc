@@ -1,0 +1,16 @@
+= Raycasting principle and algorithm
+
+TODO: just about all the text ;)
+
+An excellent source of information on raycasting can be found on https://lodev.org/cgtutor/raycasting.html[Lode's Computer Graphics Tutorial
+ - Raycasting].
+
+== The basic theory
+
+== The basic setup
+
+== The algorithm
+
+== The implementation
+
+(link to code)

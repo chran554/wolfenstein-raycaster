@@ -145,14 +145,16 @@ func TestPrintWolfensteinMap(t *testing.T) {
 }
 
 func TestPaintWolfensteinMap(t *testing.T) {
-	cellWidth := 64
+	t.Skip("Skipping test that creates image file in project directory")
 
 	level := 0
+
+	cellWidth := 64
 
 	levelMap, err := NewWolfensteinMap(level)
 	assert.NoError(t, err)
 
-	mapImage := image.NewRGBA(image.Rect(level, level, levelMap.Width()*cellWidth, levelMap.Height()*cellWidth))
+	mapImage := image.NewRGBA(image.Rect(level, level, levelMap.Width()*(cellWidth+1)+1, levelMap.Height()*(cellWidth+1)+1))
 
 	UnknownTexture := NewTextureFromFile("overlay/question-mark.png")
 
@@ -195,12 +197,15 @@ func TestPaintWolfensteinMap(t *testing.T) {
 	renderCellBorders(mapImage, levelMap.Width(), levelMap.Height(), cellWidth)
 
 	// Save map image
-	imageFile, err := os.Create(fmt.Sprintf("Wolfenstein3D_level%d.png", level))
+	filename := fmt.Sprintf("wolfenstein3d-map-level%d.png", level)
+	imageFile, err := os.Create(filename)
 	assert.NoError(t, err)
 	err = png.Encode(imageFile, mapImage)
 	assert.NoError(t, err)
 	err = imageFile.Close()
 	assert.NoError(t, err)
+
+	t.Logf("Wrote Wolfenstein 3D map (level %d) to file: %s\n", level, filename)
 }
 
 func renderCellBorders(mapImage *image.RGBA, width int, height int, cellWidth int) {
@@ -208,15 +213,15 @@ func renderCellBorders(mapImage *image.RGBA, width int, height int, cellWidth in
 
 	for cellY := 0; cellY < height; cellY++ {
 		for cellX := 0; cellX < width; cellX++ {
-			for pixel := 0; pixel < cellWidth; pixel++ {
-				mapImage.Set(cellX*cellWidth+pixel, cellY*cellWidth, c)
-				mapImage.Set(cellX*cellWidth, cellY*cellWidth+pixel, c)
+			for pixel := 0; pixel < cellWidth+1; pixel++ {
+				mapImage.Set(cellX*(cellWidth+1)+pixel, cellY*(cellWidth+1), c)
+				mapImage.Set(cellX*(cellWidth+1), cellY*(cellWidth+1)+pixel, c)
 
 				if cellX == width-1 {
-					mapImage.Set((cellX+1)*cellWidth-1, cellY*cellWidth+pixel, c)
+					mapImage.Set((cellX+1)*(cellWidth+1), cellY*(cellWidth+1)+pixel, c)
 				}
 				if cellY == height-1 {
-					mapImage.Set(cellX*cellWidth+pixel, (cellY+1)*cellWidth-1, c)
+					mapImage.Set(cellX*(cellWidth+1)+pixel, (cellY+1)*(cellWidth+1), c)
 				}
 			}
 		}
@@ -227,8 +232,8 @@ func renderMapIcon(mapImage *image.RGBA, cellX int, cellY int, cellSize int, tex
 	textureWidth := texture.Bounds().Dx()
 	textureHeight := texture.Bounds().Dy()
 
-	startX := cellX*cellSize + (cellSize-textureWidth)/2
-	startY := cellY*cellSize + (cellSize-textureHeight)/2
+	startX := cellX*(cellSize+1) + 1 + (cellSize-textureWidth)/2
+	startY := cellY*(cellSize+1) + 1 + (cellSize-textureHeight)/2
 
 	subMapImage := mapImage.SubImage(image.Rect(startX, startY, startX+textureWidth, startY+textureHeight))
 	resultImage := blend.Normal(subMapImage, texture)

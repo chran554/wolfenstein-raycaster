@@ -134,7 +134,7 @@ Trivia note for (at least) Wolfenstein 3D. +
 The cell/tile data lines are stored from top to bottom. This means if you would print the map line by line downwards, you would get the map correctly rendered as it is played in the game. +
 Remember that the first cell/tile in the data is location [0, height-1] and the last cell/tile in the data plane data is at location [width-1, 0]. It can make a lot of difference when you are trying out the maps and compare them to game play videos on YouTube.
 
-.Wolfenstein data plane 0 (walls), values and their texture mapping.
+.Wolfenstein map values and their texture mappings for level 0, plane 0 (walls).
 [cols0,0,0,1]
 |===
 | Map value (hex) | Map plane | Texture name | Description
@@ -159,10 +159,10 @@ Remember that the first cell/tile in the data is location [0, height-1] and the 
 | 0x6A ... 0x8F | Plane 0 | - | Floor tiles, not used(?)
 |===
 
-.Wolfenstein data plane 1 (specials), values and their texture mapping.
+.Wolfenstein map values and their texture mappings for level 0, plane 1 (specials).
 [cols0,0,0,1]
 |===
-| Map value (hex) | Map plane | Texture name | Description
+| Map value (hex) | Map plane | Texture (sprite) name | Description
 
 | 0x0D | Plane 1 |          |
 | 0x0E | Plane 1 |          |
