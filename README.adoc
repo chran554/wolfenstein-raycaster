@@ -32,7 +32,7 @@ I have written my own summary on the link:documentation/raycasting.adoc[raycasti
 A quick run through the maze and some final toggles of the rendering options for lights and textures.
 
 .Raycasting maze video at Vimeo
-[link=https://vimeo.com/1042705141[documentation/images/maze-ambient_low-dynamic_on-texture_on.png]]
+[link=https://vimeo.com/1042705141]
 image::documentation/images/maze-ambient_low-dynamic_on-texture_on.png[Raycasting maze video at Vimeo]
 
 
