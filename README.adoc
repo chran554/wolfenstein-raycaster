@@ -27,7 +27,16 @@ An excellent source of information on raycasting can be found on https://lodev.o
 
 I have written my own summary on the link:documentation/raycasting.adoc[raycasting principle and algorithm].
 
-=== Examples
+=== Example video
+
+A quick run through the maze and some final toggles of the rendering options for lights and textures.
+
+.Raycasting maze video at Vimeo
+[link=https://vimeo.com/1042705141[documentation/images/maze-ambient_low-dynamic_on-texture_on.png]]
+image::documentation/images/maze-ambient_low-dynamic_on-texture_on.png[Raycasting maze video at Vimeo]
+
+
+=== Example screenshots
 
 Screenshots from running the maze using map (level 0) and textures from Wolfenstein 3D.
 
@@ -46,7 +55,7 @@ NOTE: The FPS (frames per second) counter show a relative low frame count.
 That is because I use the Fyne UI library to show the rendered frames/images.
 Fyne is *not* aimed to be a game render library but a common application UI.
 
-.Render settings: ambient=full, dynamic light (observer)=off, texture=on. (This is rendering that is most true to the original game that could only use a 256-color palette.)
+.Render settings: ambient=full, dynamic light (observer)=off, texture=on. (This is the rendering that is most true to the original game that could only use a 256-color palette.)
 [link=documentation/images/maze-ambient_full-dynamic_off-texture_on.png]
 image::documentation/images/maze-ambient_full-dynamic_off-texture_on.png[Wolfenstein 3D (level 0),width=300]
 

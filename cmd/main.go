@@ -30,9 +30,12 @@ var (
 
 	observerRadius = 0.2
 
-	useTextures      = true
-	useAmbientLight  = 2 // Value: 0 == "ambient light off", 1 == "full ambient light", 2 == "dark ambient light"
-	useObserverLight = 2 // Value: 0 == "observer light off", 1 == "observer light", 2 == "observer light animation"
+	showInformation  = true  // Show information about FPS, observer position and iew direction and rendering settings
+	showMap          = true  // Show an overview map of the maze with observer position centered in the middle
+	showAimLine      = false // Show aim line ("cross-hair")
+	useTextures      = true  // Value: false == "no textures", true == "show textures"
+	useAmbientLight  = 2     // Value: 0 == "ambient light off", 1 == "full ambient light", 2 == "dark ambient light"
+	useObserverLight = 2     // Value: 0 == "observer light off", 1 == "observer light", 2 == "observer light animation"
 )
 
 func main() {
@@ -122,8 +125,8 @@ func main() {
 	img := image.NewRGBA(imageSize)
 
 	rayImage := image.NewRGBA(image.Rect(0, 0, 100, 100))
-	rayMapCanvas := canvas.NewImageFromImage(rayImage)
-	rayMapCanvas.SetMinSize(fyne.NewSize(float32(rayImage.Bounds().Dx()), float32(rayImage.Bounds().Dy())))
+	mapCanvas := canvas.NewImageFromImage(rayImage)
+	mapCanvas.SetMinSize(fyne.NewSize(float32(rayImage.Bounds().Dx()), float32(rayImage.Bounds().Dy())))
 
 	fpsLabel := widget.NewLabel("")
 	posLabel := widget.NewLabel("")
@@ -132,8 +135,9 @@ func main() {
 	imgCanvas := canvas.NewImageFromImage(img)
 	imgCanvas.FillMode = canvas.ImageFillStretch
 	imgCanvas.ScaleMode = canvas.ImageScaleFastest
-	infoContainer := container.NewVBox(container.NewHBox(rayMapCanvas, container.NewVBox(container.NewHBox(fpsLabel, posLabel, layout.NewSpacer()), container.NewVBox(featureLabel, layout.NewSpacer())), layout.NewSpacer()))
-	window.SetContent(container.NewStack(imgCanvas, infoContainer))
+	informationContainer := container.NewVBox(container.NewHBox(fpsLabel, posLabel, layout.NewSpacer()), container.NewVBox(featureLabel, layout.NewSpacer()))
+	overlayContainer := container.NewVBox(container.NewHBox(mapCanvas, informationContainer, layout.NewSpacer()))
+	window.SetContent(container.NewStack(imgCanvas, overlayContainer))
 
 	window.Resize(fyne.NewSize(float32(windowWidth), float32(windowHeight)))
 
@@ -212,34 +216,41 @@ func main() {
 				paintImageColorized(img, pixelColumnInfos, ambientLight, torchLight)
 			}
 
-			paintRayMap(rayImage, observer, worldMap)
-			rayMapCanvas.Refresh()
+			if showMap {
+				paintMap(rayImage, observer, worldMap)
+			}
+			mapCanvas.Hidden = !showMap
+			mapCanvas.Refresh()
 
 			now := time.Now()
 			duration := now.Sub(timestamp)
 			timestamp = now
 			fps := 1000.0 / float64(duration.Milliseconds())
 
-			textureString := "OFF"
-			if useTextures {
-				textureString = "ON"
-			}
-			ambientString := "OFF"
-			if useAmbientLight == 1 {
-				ambientString = "FULL"
-			} else if useAmbientLight == 2 {
-				ambientString = "LOW"
-			}
-			observerLightString := "OFF"
-			if useObserverLight == 1 {
-				observerLightString = "ON"
-			} else if useObserverLight == 2 {
-				observerLightString = "ANIMATED"
-			}
+			if showInformation {
+				textureString := "OFF"
+				if useTextures {
+					textureString = "ON"
+				}
+				ambientString := "OFF"
+				if useAmbientLight == 1 {
+					ambientString = "FULL"
+				} else if useAmbientLight == 2 {
+					ambientString = "LOW"
+				}
+				observerLightString := "OFF"
+				if useObserverLight == 1 {
+					observerLightString = "ON"
+				} else if useObserverLight == 2 {
+					observerLightString = "ANIMATED"
+				}
 
-			fpsLabel.SetText(fmt.Sprintf("FPS: %.0f", fps))
-			posLabel.SetText(fmt.Sprintf("pos: %+v  dir: %.0f", observer, viewDirectionAngle*(180.0/math.Pi)))
-			featureLabel.SetText(fmt.Sprintf("[a] ambient light: %s    [o] observer light: %s    [t] texture: %s", ambientString, observerLightString, textureString))
+				fpsLabel.SetText(fmt.Sprintf("FPS: %.0f", fps))
+				posLabel.SetText(fmt.Sprintf("pos: %+v  dir: %.0f", observer, viewDirectionAngle*(180.0/math.Pi)))
+				featureLabel.SetText(fmt.Sprintf("[a] ambient light: %s    [o] observer light: %s    [t] texture: %s", ambientString, observerLightString, textureString))
+			}
+			informationContainer.Hidden = !showInformation
+			informationContainer.Refresh()
 
 			imgCanvas.Refresh()
 			time.Sleep(20 * time.Millisecond)
@@ -255,7 +266,7 @@ func isObstacleInTheWay(headingDirection *maze.Vector, observer *maze.Vector, wo
 	return info.Wall.Structure.IsObstacle() && (dist-observerRadius) < movementLength
 }
 
-func paintRayMap(mapImage *image.RGBA, observer *maze.Vector, m raycastmap.Map) {
+func paintMap(mapImage *image.RGBA, observer *maze.Vector, m raycastmap.Map) {
 	colorBorder := color.NRGBA{R: 128, G: 16, B: 16, A: 128}
 
 	w := mapImage.Bounds().Dx()
@@ -372,8 +383,8 @@ func paintImageTexturized(img *image.RGBA, pixelColumnInfos []maze.IntersectionI
 				img.Pix[imageDataIndex+2] = bb
 				img.Pix[imageDataIndex+3] = scaledPixelData[pixelYIndex*4+3] // A (alpha)
 
-				// Middle hair "cross"
-				if x == len(pixelColumnInfos)/2 {
+				// Middle aim line ("cross-hair")
+				if showAimLine && x == len(pixelColumnInfos)/2 {
 					img.Pix[imageDataIndex+0] = 255
 				}
 			}
